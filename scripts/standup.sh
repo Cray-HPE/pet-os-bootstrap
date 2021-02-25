@@ -19,6 +19,26 @@ echo "k8s $k8s"
 echo "ceph $ceph"
 echo "all $all"
 
+#begin expiremental conditional for what volumes to build.
+if [ "$all" = "true" ]
+then
+  ceph="true"
+  k8s="true"
+fi
+echo "ceph $ceph"
+echo "k8s $k8s"
+
+if  [ "$ceph" = "true" ]
+then
+  echo "CEPH"
+fi
+if [ $k8s = "true" ]
+then
+  echo "K8S"
+fi
+
+echo "k8s $k8s    ceph $ceph    all $all"
+
 
 for node in $(openstack server list -f json| jq -r .[].Name); do  echo "$(openstack server show -f json $node|jq -r .addresses|cut -d = -f2) $node" >> hosts; done
 
