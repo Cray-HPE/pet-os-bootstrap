@@ -1,6 +1,19 @@
 # Create Volume
 > hosts
 
+# I think we need to build something in that makes either k8s or ceph optional.
+# they could technically build mercury using this as well.
+# below code to test
+#while getopts k:c:a $stack
+#do
+#  case "${stack}" in
+#          k) k8s=$OPTARG;;
+#          c) ceph=$OPTARG;;
+#          a) all=$OPTARG;;
+#  esac
+#done
+
+
 for node in $(openstack server list -f json| jq -r .[].Name); do  echo "$(openstack server show -f json $node|jq -r .addresses|cut -d = -f2) $node" >> hosts; done
 
 for num in 1 2 3
