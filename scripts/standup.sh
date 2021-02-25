@@ -4,14 +4,20 @@
 # I think we need to build something in that makes either k8s or ceph optional.
 # they could technically build mercury using this as well.
 # below code to test
-#while getopts k:c:a $stack
-#do
-#  case "${stack}" in
-#          k) k8s=$OPTARG;;
-#          c) ceph=$OPTARG;;
-#          a) all=$OPTARG;;
-#  esac
-#done
+while getopts k:c:a: stack
+do
+  case "${stack}" in
+          k) k8s=$OPTARG;;
+          c) ceph=$OPTARG;;
+          a) all=$OPTARG;;
+  esac
+done
+
+# Just here for sanity.  can remove shortly
+
+echo "k8s $k8s"
+echo "ceph $ceph"
+echo "all $all"
 
 
 for node in $(openstack server list -f json| jq -r .[].Name); do  echo "$(openstack server show -f json $node|jq -r .addresses|cut -d = -f2) $node" >> hosts; done
