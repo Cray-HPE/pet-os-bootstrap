@@ -1,6 +1,18 @@
 # Create Volume
 > hosts
 
+# I think we need to build something in that makes either k8s or ceph optional.
+# they could technically build mercury using this as well.  
+
+while getopts k:c:a $stack
+do
+  case "${stack}" in 
+	  k) k8s=$OPTARG;;
+          c) ceph=$OPTARG;;
+	  a) all=$OPTARG;;
+  esac
+done
+
 for node in $(openstack server list -f json| jq -r .[].Name); do  echo "$(openstack server show -f json $node|jq -r .addresses|cut -d = -f2) $node" >> hosts; done
 
 for num in 1 2 3
@@ -30,7 +42,7 @@ done
 
 # use to get volume and server names
 echo "sleeping 60 second...zzz.."
-sleep 60
+sleep 60 
 
 for node in 1 2 3
 do
@@ -50,4 +62,4 @@ for vol in 1 2 3
 done
 # For hosts file/dnsmasq
 
-for node in $(openstack server list -f json| jq -r .[].Name); do  echo "$(openstack server show -f json $node|jq -r .addresses|cut -d = -f2) $node"; don
+for node in $(openstack server list -f json| jq -r .[].Name); do  echo "$(openstack server show -f json $node|jq -r .addresses|cut -d = -f2) $node"; done
