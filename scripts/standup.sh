@@ -2,43 +2,16 @@
 > hosts
 
 # I think we need to build something in that makes either k8s or ceph optional.
-# they could technically build mercury using this as well.
-# below code to test
-while getopts k:c:a: stack
+# they could technically build mercury using this as well.  
+
+while getopts k:c:a $stack
 do
-  case "${stack}" in
-          k) k8s=$OPTARG;;
+  case "${stack}" in 
+	  k) k8s=$OPTARG;;
           c) ceph=$OPTARG;;
-          a) all=$OPTARG;;
+	  a) all=$OPTARG;;
   esac
 done
-
-# Just here for sanity.  can remove shortly
-
-echo "k8s $k8s"
-echo "ceph $ceph"
-echo "all $all"
-
-#begin expiremental conditional for what volumes to build.
-if [ "$all" = "true" ]
-then
-  ceph="true"
-  k8s="true"
-fi
-echo "ceph $ceph"
-echo "k8s $k8s"
-
-if  [ "$ceph" = "true" ]
-then
-  echo "CEPH"
-fi
-if [ $k8s = "true" ]
-then
-  echo "K8S"
-fi
-
-echo "k8s $k8s    ceph $ceph    all $all"
-
 
 for node in $(openstack server list -f json| jq -r .[].Name); do  echo "$(openstack server show -f json $node|jq -r .addresses|cut -d = -f2) $node" >> hosts; done
 
@@ -69,7 +42,7 @@ done
 
 # use to get volume and server names
 echo "sleeping 60 second...zzz.."
-sleep 60
+sleep 60 
 
 for node in 1 2 3
 do
@@ -89,4 +62,4 @@ for vol in 1 2 3
 done
 # For hosts file/dnsmasq
 
-for node in $(openstack server list -f json| jq -r .[].Name); do  echo "$(openstack server show -f json $node|jq -r .addresses|cut -d = -f2) $node"; don
+for node in $(openstack server list -f json| jq -r .[].Name); do  echo "$(openstack server show -f json $node|jq -r .addresses|cut -d = -f2) $node"; done
