@@ -1,9 +1,23 @@
 #!/bin/bash
 rm /root/zero-file
 
-route=$(ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1)
-#ip route add default via $route
-ip route add 172.16.0.0/12 via $route dev eth0
+#route=$(ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1)
+#ip route add default via 10.248.0.1
+#ip route add 172.16.0.0/12 via $route dev eth0
+
+echo "Adding default_route startup script"
+echo "#!/bin/sh
+
+### BEGIN INIT INFO
+# Default-Start:     5
+# Required-Start:    network
+# Required-Start:    wickedd
+### END INIT INFO
+
+ip route add default via 10.248.0.1
+" >> /etc/init.d/default_route
+
+insserv /etc/init.d/default_route
 
 echo "server ncn-s001 iburst maxsources 3 prefer
 allow 10.248.0.0/18
@@ -16,6 +30,15 @@ sed -i 's/^#NTP=.*/NTP=ncn-s001/g' /etc/systemd/timesyncd.conf
 sed -i -e '/rgwloadbalancers/,+4 s/^/#/' /etc/ansible/hosts
 sed -i 's/vlan002/eth0/g' /etc/ansible/hosts
  
+
+
+#######
+#  Maybe we can remove some of this now that cloud init works-ish
+#######
+if [[ "$(hostname)" =~ ^ncn-m ]] || [[ "$(hostname)" =~ ^ncn-w ]]; then
+  sed -i -e '/CONTROL.*to be availabl/,+3 s/^/#/' /srv/cray/scripts/common/kubernetes-cloudinit.sh
+  sed -i 's/vlan002/eth1/' /srv/cray/scripts/metal/generate_keepalived_conf.sh
+fi
 
 if [ $HOSTNAME == "ncn-s001" ]
   then 
@@ -69,3 +92,17 @@ systemctl restart systemd-timedated.service
 systemctl restart chronyd.service
 
 cephadm --image dtr.dev.cray.com/ceph/ceph:v15.2.8 pull
+
+systemctl stop cloud-init.target
+rm -rf /var/lib/cloud/*.*
+rm -rf /run/cloud-init/*.*
+
+echo "datasource:
+  NoCloud:
+    seedfrom: http://10.248.4.244:8888/" >> /etc/cloud/cloud.cfg 
+systemctl start cloud-init
+cloud-init clean
+cloud-init init
+cloud-init modules -m init
+cloud-init modules -m config
+cloud-init modules -m final
