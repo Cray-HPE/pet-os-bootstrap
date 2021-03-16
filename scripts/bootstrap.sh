@@ -94,19 +94,22 @@ fi
 
 # put conditional here based off status
 #openstack server list -f json |jq '.[]| {Name, Status}'
+
+
 echo "Sleeping for 10 seconds ...ZZZ..."
 sleep 10
 for vol in 1 2 3
  do
   openstack server add volume ncn-s00$vol osd.$vol
 done
+
+
 # For hosts file/dnsmasq
 
-#for node in $(openstack server list -f json| jq -r .[].Name); do  echo "$(openstack server show -f json $node|jq -r .addresses|cut -d = -f2) $node $node.nmn"; done
 for node in $(openstack server list -f json| jq -r .[].Name|egrep -i 'ncn-')
 do
  ip="$(openstack server show -f json $node|jq -r .addresses|cut -d ';' -f1|cut -d = -f2)"
- ping -c1 "$ip" 2>&1 >/dev/null
+ until ping -c1 "$ip" 2>&1 >/dev/null; do :; done
  mac="$(ip -r -br n show to $ip|awk '{print $5}')"
  echo "$ip $node $node.nmn" >> /etc/hosts
  sed -i -e "s/mac-$node/$mac/" /var/www/ephemeral/configs/data.json
@@ -116,5 +119,3 @@ echo "Restarting dnsmasq and basecamp"
 systemctl restart dnsmasq.service
 podman restart basecamp
 
-# Put in scp for resolv.conf
-# should we automate adding in the nameserver?  pit is supposed to stay around
