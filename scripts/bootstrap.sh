@@ -72,7 +72,6 @@ done
 echo "sleeping 20 second...zzz.."
 sleep 20
 
-
 if  [ "$ceph" = "true" ] || [ "$all" = "true" ]
 then
  echo "Creating vms for ceph"
