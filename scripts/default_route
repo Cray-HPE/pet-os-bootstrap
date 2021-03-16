@@ -1,0 +1,27 @@
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Default-Start:     5
+# Required-Start:    network
+# Required-Start:    wickedd
+### END INIT INFO
+
+# Source function library
+if [ -f /etc/rc.status ]; then
+   . /etc/rc.status
+fi
+
+case "$1" in
+	start)
+            ip route add default via 10.248.0.1
+	    ;;
+	stop)
+	    ;;
+	status)
+	    ;;
+	restart)
+	    ;;
+	*)
+	    echo $"Usage: $0 {start|stop|restart|status}"
+	    exit 1
+esac
