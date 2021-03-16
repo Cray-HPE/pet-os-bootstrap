@@ -1,3 +1,4 @@
+#!/bin/bash
 # Create Volume
 
 # I think we need to build something in that makes either k8s or ceph optional.
@@ -101,9 +102,7 @@ for vol in 1 2 3
  do
   openstack server add volume ncn-s00$vol osd.$vol
 done
-# For hosts file/dnsmasq
 
-#for node in $(openstack server list -f json| jq -r .[].Name); do  echo "$(openstack server show -f json $node|jq -r .addresses|cut -d = -f2) $node $node.nmn"; done
 cp /var/www/ephemeral/configs/data.orig /var/www/ephemeral/configs/data.json
 for node in $(openstack server list -f json| jq -r .[].Name|egrep -i 'ncn-')
 do
