@@ -1,0 +1,262 @@
+{
+  "Global": {
+    "meta-data": {
+      "ca-certs": {
+        "remove-defaults": false,
+        "trusted": [
+          "-----BEGIN CERTIFICATE-----\nMIIEhzCCAu+gAwIBAgIJAM9z1WbpFvuhMA0GCSqGSIb3DQEBCwUAMGExDzANBgNV\nBAoMBlNoYXN0YTERMA8GA1UECwwIUGxhdGZvcm0xOzA5BgNVBAMMMlBsYXRmb3Jt\nIENBICgyRDM4OTNDRi1BNDk3LTQ3MUMtODUwRi0yMzJBNzlGQzAwQUMpMB4XDTIx\nMDEwNjA0MDA0M1oXDTMxMDEwNTA0MDA0M1owYTEPMA0GA1UECgwGU2hhc3RhMREw\nDwYDVQQLDAhQbGF0Zm9ybTE7MDkGA1UEAwwyUGxhdGZvcm0gQ0EgKDJEMzg5M0NG\nLUE0OTctNDcxQy04NTBGLTIzMkE3OUZDMDBBQykwggGiMA0GCSqGSIb3DQEBAQUA\nA4IBjwAwggGKAoIBgQC1oQQQPTcBVn/NH+8fvMcLFjpYWaWsphnnkgj+QwtDBhN8\nXSorzHSEnv8ewDGO02HdXJDByQeqJPLbb2RSB+fbbZRMueuWWWOVaNLoXoi/a5JS\nYlYuBpX2tpj9njo/k3dv7APbc1YXL4JT0Hy9TyG4Nzom5rCIQaPnoTYVeyR/FH0o\n1ZAPp3rpwZq8tWB2sUXmM+RMmp2nL0ihNlauKatFYVvYKb2BGyZC2705D1gmtog9\nrKFTOPdJgvG2leR31n3uypStXOJrWe2j8Uza2sE2mlwDrAQO2L0J4HWKzpJo1T02\nqc23RthzqDKZt0Ffz4R7CoWES+cJ4hyQeQqOguPC9vKY8vR1vLNYWU55NsTsBsT1\nisYexqDA5EfuLkrQMSnqTcGU0pi12U5KjsczDR/KS6mlnl7QGEIpY/RccpF2jg7T\njIE+7YU+R0Vt1zI5IGWhZnvBdfBmPdeyO9wgyKAvt96tohUAP3DfKl/64XlKTQaE\n4EvwbSPe+m4YW4/pdvUCAwEAAaNCMEAwDwYDVR0TAQH/BAUwAwEB/zAOBgNVHQ8B\nAf8EBAMCAQYwHQYDVR0OBBYEFPHodESJNCmpA8iGBqvjQwc1murbMA0GCSqGSIb3\nDQEBCwUAA4IBgQCMqLuyP5h8D4UEEgzIwRSCO+4hBjLN6a49VoCQnUTw9X2wGs8a\nzWTP13lSGXmaNmU2k+S29253uF+Snxmg1SDteO0QT41E39EVIV9mJHIlgEGw0xmk\n7bL0Gh7fM7UoFKIM+66XwO31jk8RSaqurkH14Sz40q0DVm1kZF9Y4u+HZTF3vKE0\nFGqEnFGagoq2GquwWrOtRR2OCd1LnMGjvX4l6zw0f7qWXKJtbGTLyjbdj2H/YA+a\nRJlbeTNkTHzJ7qwm0Fab1aGmQvjwUI4XWMwLUtc60d6aF0Ub4yIdZWIjrlGXcU8h\n+s65wZBp+ay8HDdg6wg3hQvW2RNWdU5qeswA4qgG0WZ/qqqYiJMw/ze+O67HHOMl\nLTcqc3kJcOBrse+OkYrLQqYuOX9tVUNMNSDVf9gu7av8fpYOffZCX8WpNgdhxB7z\nus1iFBm2a4m6XrQC9lvX10yCqLQAlR/Mo9knUdLejXe92h1UpHhziHl7ouZzCGHj\n2jfVh5/3qxffSVU=\n-----END CERTIFICATE-----\n",
+          "-----BEGIN CERTIFICATE-----\nMIIErTCCAxWgAwIBAgIJAKi2qWLc/JFIMA0GCSqGSIb3DQEBCwUAMGExDzANBgNV\nBAoMBlNoYXN0YTERMA8GA1UECwwIUGxhdGZvcm0xOzA5BgNVBAMMMlBsYXRmb3Jt\nIENBICgyRDM4OTNDRi1BNDk3LTQ3MUMtODUwRi0yMzJBNzlGQzAwQUMpMB4XDTIx\nMDEwNjA0MDA0NFoXDTMxMDEwNDA0MDA0NFowZjEPMA0GA1UECgwGU2hhc3RhMREw\nDwYDVQQLDAhQbGF0Zm9ybTFAMD4GA1UEAww3UGxhdGZvcm0gQ0EgLSBMMSAoMkQz\nODkzQ0YtQTQ5Ny00NzFDLTg1MEYtMjMyQTc5RkMwMEFDKTCCAaIwDQYJKoZIhvcN\nAQEBBQADggGPADCCAYoCggGBAORxcVgwBVO1oefOWzX/IXGpyv4m7zILj8NpozDO\n22kpXV2LigLugKvn/p5Dh9GSToZQhaTs4hiwFfkn5+TRKUiMakVoYt6bd7RkoWrV\nDrW6WhessPpHWKlq6/JygqD4QZzwhqB+QYEKLV+4spal5B7SswnphooEO/Gs3P2E\niUfeG56VdEZZcTVHHNs99r0uEgzgnNb3gmWTAleVzKxjD5ItJbsSwj7fjOyUQl6F\n++HZppEo5WK969TBM3z5dWxiMTaQ3HVSfTdtXIAZY+LEetmKbtSRNaOWLzHvF9hs\njcEfRuVj4BHwi+yIQt4D6+koue0uNACLYKTIdYWDyHZ8WqzeaFJIpjiBAokP9q/S\nVU+z5nwMhjyVYvyHmp0yWhyG/O9n2lygF6wW7jYLiEftpJFTnwdhku9n30++sUng\nZ5v2h9WbiAF1Bqhqfe6F8VEa5ss/z1XgtrepZ/FL7zG5ul7pFOcY+E5XibVzMHVg\nGh40AC6m5cqsfSanL1evakbWgQIDAQABo2MwYTAPBgNVHRMBAf8EBTADAQH/MA4G\nA1UdDwEB/wQEAwIBBjAdBgNVHQ4EFgQUkyJvssmhacDrRGa6cW2RaqQON0YwHwYD\nVR0jBBgwFoAU8eh0RIk0KakDyIYGq+NDBzWa6tswDQYJKoZIhvcNAQELBQADggGB\nABCU87r1jvY+6Ssfo1rQpIbn6fPLadNdSPoRoSEWxJWLXJZdHenaMDIYKhCALN8x\nOky6hobXW+TuHBir8+rkPajKC0XV9h486tkziOu188sSLp4uufZzM72OB5TWKxTX\nIQtE4wZ7phkShMklj3n9E31088Nj9pQ4PoxNTcxk/nA7wNyq+u8mfIcMOFmER7CF\n6eQJeGUGMz84akl4WZ6/5PdV/tSn43CX2JQ/lHeKLA1MypUk9TWKtI7AisMyucFs\n4hp4WJYmAcyAZKVCmY9YYaP7Qmr8koV27U94TOFr9l/U64S5SSmKYR+pxCsm3Z3/\naQvxZ8lWujbJHavqbo1lZXHfZp0aLTPALAHOB94YaxrzlItRTCy/4CVcUMwvcv6F\nCK9MxHM4VTtMqxF2h8sc6F6k6MuJ14mK1zseoheoxHeEcDjZLDy4GEMGv+oBtNOu\nobg66lkCc9sIMk/NX6ZGzRZt53wT2LJf3xAa6llf4UVkCs1iSkzHaZZ4/DBorbbt\nbg==\n-----END CERTIFICATE-----\n"
+        ]
+      },
+      "can-gw": "10.102.9.20",
+      "can-if": "vlan007",
+      "ceph-cephfs-image": "dtr.dev.cray.com/cray/cray-cephfs-provisioner:0.1.0-nautilus-1.3",
+      "ceph-rbd-image": "dtr.dev.cray.com/cray/cray-rbd-provisioner:0.1.0-nautilus-1.3",
+      "chart-repo": "http://helmrepo.dev.cray.com:8080",
+      "dns-server": "DNS-REPLACE-ME",
+      "docker-image-registry": "dtr.dev.cray.com",
+      "domain": "nmn hmn",
+      "first-master-hostname": "ncn-m002",
+      "internal-domain": "~FIXME~",
+      "k8s-api-auditing-enabled": false,
+      "k8s-virtual-ip": "NOT-USED",
+      "kubernetes-max-pods-per-node": "200",
+      "kubernetes-pods-cidr": "10.32.0.0/12",
+      "kubernetes-services-cidr": "10.16.0.0/12",
+      "kubernetes-weave-mtu": "1376",
+      "ncn-mgmt-node-auditing-enabled": false,
+      "ntp_local_nets": "10.248.0.0/18",
+      "ntp_peers": "ncn-m003 ncn-w001 ncn-s001 ncn-s002 ncn-m001 ncn-m002 ncn-w002 ncn-s003 ncn-w003",
+      "num_storage_nodes": "3",
+      "rgw-virtual-ip": "NOT-USED",
+      "site-domain": "dev.cray.com",
+      "system-name": "test_dev",
+      "upstream_ntp_server": "time.nist.gov",
+      "wipe-ceph-osds": "yes"
+    }
+  },
+  "mac-ncn-w003": {
+    "meta-data": {
+      "availability-zone": "x3000",
+      "instance-id": "i-E0C27628",
+      "local-hostname": "ncn-w003",
+      "region": "redbull",
+      "shasta-role": "ncn-worker",
+      "xname": "x3000c0s22b0n0"
+    },
+    "user-data": {
+      "hostname": "ncn-w003",
+      "local_hostname": "ncn-w003",
+      "mac0": {
+        "gateway": "10.252.0.1",
+        "ip": "",
+        "mask": "10.252.2.0/23"
+      },
+      "runcmd": [
+        "/srv/cray/scripts/metal/set-dns-config.sh",
+        "/srv/cray/scripts/metal/set-ntp-config.sh",
+        "/srv/cray/scripts/common/update_ca_certs.py",
+        "/srv/cray/scripts/common/kubernetes-cloudinit.sh"
+      ]
+    }
+  },
+  "mac-ncn-s001": {
+    "meta-data": {
+      "availability-zone": "x3000",
+      "instance-id": "i-55F6E42D",
+      "local-hostname": "ncn-s001",
+      "region": "redbull",
+      "shasta-role": "ncn-storage",
+      "xname": "x3000c0s11b0n0"
+    },
+    "user-data": {
+      "hostname": "ncn-s001",
+      "local_hostname": "ncn-s001",
+      "mac0": {
+        "gateway": "10.252.0.1",
+        "ip": "",
+        "mask": "10.252.2.0/23"
+      },
+      "runcmd": [
+        "/srv/cray/scripts/metal/set-dhcp-to-static.sh",
+        "/srv/cray/scripts/metal/set-dns-config.sh",
+        "/srv/cray/scripts/metal/set-ntp-config.sh",
+        "/srv/cray/scripts/common/update_ca_certs.py",
+        "/srv/cray/scripts/common/storage-ceph-cloudinit.sh"
+      ]
+    }
+  },
+  "mac-ncn-m002": {
+    "meta-data": {
+      "availability-zone": "x3000",
+      "instance-id": "i-867FF94D",
+      "local-hostname": "ncn-m002",
+      "region": "redbull",
+      "shasta-role": "ncn-master",
+      "xname": "x3000c0s3b0n0"
+    },
+    "user-data": {
+      "hostname": "ncn-m002",
+      "local_hostname": "ncn-m002",
+      "mac0": {
+        "gateway": "10.252.0.1",
+        "ip": "",
+        "mask": "10.252.2.0/23"
+      },
+      "runcmd": [
+        "/srv/cray/scripts/metal/set-dns-config.sh",
+        "/srv/cray/scripts/metal/set-ntp-config.sh",
+        "/srv/cray/scripts/common/update_ca_certs.py",
+        "/srv/cray/scripts/common/kubernetes-cloudinit.sh"
+      ]
+    }
+  },
+  "mac-ncn-s003": {
+    "meta-data": {
+      "availability-zone": "x3000",
+      "instance-id": "i-BE1A3824",
+      "local-hostname": "ncn-s003",
+      "region": "redbull",
+      "shasta-role": "ncn-storage",
+      "xname": "x3000c0s15b0n0"
+    },
+    "user-data": {
+      "hostname": "ncn-s003",
+      "local_hostname": "ncn-s003",
+      "mac0": {
+        "gateway": "10.252.0.1",
+        "ip": "",
+        "mask": "10.252.2.0/23"
+      },
+      "runcmd": [
+        "/srv/cray/scripts/metal/set-dns-config.sh",
+        "/srv/cray/scripts/metal/set-ntp-config.sh",
+        "/srv/cray/scripts/metal/install-bootloader.sh"
+      ]
+    }
+  },
+  "mac-ncn-m003": {
+    "meta-data": {
+      "availability-zone": "x3000",
+      "instance-id": "i-D407E881",
+      "local-hostname": "ncn-m003",
+      "region": "redbull",
+      "shasta-role": "ncn-master",
+      "xname": "x3000c0s5b0n0"
+    },
+    "user-data": {
+      "hostname": "ncn-m003",
+      "local_hostname": "ncn-m003",
+      "mac0": {
+        "gateway": "10.252.0.1",
+        "ip": "",
+        "mask": "10.252.2.0/23"
+      },
+      "runcmd": [
+        "/srv/cray/scripts/metal/set-dns-config.sh",
+        "/srv/cray/scripts/metal/set-ntp-config.sh",
+        "/srv/cray/scripts/common/update_ca_certs.py",
+        "/srv/cray/scripts/common/kubernetes-cloudinit.sh"
+      ]
+    }
+  },
+  "mac-ncn-m001": {
+    "meta-data": {
+      "availability-zone": "x3000",
+      "instance-id": "i-1DFF2A77",
+      "local-hostname": "ncn-m001",
+      "region": "redbull",
+      "shasta-role": "ncn-master",
+      "xname": "x3000c0s1b0n0"
+    },
+    "user-data": {
+      "hostname": "ncn-m001",
+      "local_hostname": "ncn-m001",
+      "mac0": {
+        "gateway": "10.252.0.1",
+        "ip": "",
+        "mask": "10.252.2.0/23"
+      },
+      "runcmd": [
+        "/srv/cray/scripts/metal/set-dns-config.sh",
+        "/srv/cray/scripts/metal/set-ntp-config.sh",
+        "/srv/cray/scripts/common/update_ca_certs.py",
+        "/srv/cray/scripts/common/kubernetes-cloudinit.sh"
+      ]
+    }
+  },
+  "mac-ncn-w001": {
+    "meta-data": {
+      "availability-zone": "x3000",
+      "instance-id": "i-0B0CD1DA",
+      "local-hostname": "ncn-w001",
+      "region": "redbull",
+      "shasta-role": "ncn-worker",
+      "xname": "x3000c0s7b0n0"
+    },
+    "user-data": {
+      "hostname": "ncn-w001",
+      "local_hostname": "ncn-w001",
+      "mac0": {
+        "gateway": "10.252.0.1",
+        "ip": "",
+        "mask": "10.252.2.0/23"
+      },
+      "runcmd": [
+        "/srv/cray/scripts/metal/set-dns-config.sh",
+        "/srv/cray/scripts/metal/set-ntp-config.sh",
+        "/srv/cray/scripts/common/update_ca_certs.py",
+        "/srv/cray/scripts/common/kubernetes-cloudinit.sh"
+      ]
+    }
+  },
+  "mac-ncn-s002": {
+    "meta-data": {
+      "availability-zone": "x3000",
+      "instance-id": "i-FABEA14D",
+      "local-hostname": "ncn-s002",
+      "region": "redbull",
+      "shasta-role": "ncn-storage",
+      "xname": "x3000c0s13b0n0"
+    },
+    "user-data": {
+      "hostname": "ncn-s002",
+      "local_hostname": "ncn-s002",
+      "mac0": {
+        "gateway": "10.252.0.1",
+        "ip": "",
+        "mask": "10.252.2.0/23"
+      },
+      "runcmd": [
+        "/srv/cray/scripts/metal/set-dns-config.sh",
+        "/srv/cray/scripts/metal/set-ntp-config.sh",
+        "/srv/cray/scripts/metal/install-bootloader.sh"
+      ]
+    }
+  },
+  "mac-ncn-w002": {
+    "meta-data": {
+      "availability-zone": "x3000",
+      "instance-id": "i-EAD1F5E3",
+      "local-hostname": "ncn-w002",
+      "region": "redbull",
+      "shasta-role": "ncn-worker",
+      "xname": "x3000c0s9b0n0"
+    },
+    "user-data": {
+      "hostname": "ncn-w002",
+      "local_hostname": "ncn-w002",
+      "mac0": {
+        "gateway": "10.252.0.1",
+        "ip": "",
+        "mask": "10.252.2.0/23"
+      },
+      "runcmd": [
+        "/srv/cray/scripts/metal/set-dns-config.sh",
+        "/srv/cray/scripts/metal/set-ntp-config.sh",
+        "/srv/cray/scripts/common/update_ca_certs.py",
+        "/srv/cray/scripts/common/kubernetes-cloudinit.sh"
+      ]
+    }
+  }
+}
