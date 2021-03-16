@@ -30,7 +30,7 @@ then
   echo "Creating boot and OSD volumes for CEPH"
   for num in 1 2 3
   do
-   openstack volume create --size 25 --type RBD  osd.$num
+   openstack volume create --size 25 --type RBD osd.$num
    openstack volume create --size 25 --type RBD --bootable --snapshot 1.4.ceph-gold ncn-s00$num
   done
 fi
@@ -46,9 +46,7 @@ then
 fi
 
 
-for node in $(openstack server list -f json| jq -r .[].Name); do  echo "$(openstack server show -f json $node|jq -r .addresses|cut -d = -f2) $node" >> hosts; done
-
-
+#for node in $(openstack server list -f json| jq -r .[].Name); do  echo "$(openstack server show -f json $node|jq -r .addresses|cut -d = -f2) $node" >> hosts; done
 
 # Getting status of openstack volumes
 # Change to a while or until
@@ -80,7 +78,7 @@ then
  echo "Creating vms for ceph"
  for node in 1 2 3
   do
-   openstack server create  --flavor highmem.2  --key-name  $sshkey --user-data init.sh  --volume ncn-s00$node --network Cray_Network --network PET_NET --file /etc/hosts=hosts ncn-s00$node
+   openstack server create --flavor highmem.2  --key-name  $sshkey --user-data init.sh  --volume ncn-s00$node --network Cray_Network --file /etc/hosts=hosts ncn-s00$node
   done
 fi
 
@@ -89,8 +87,8 @@ then
  echo "Creating vms for K8S"
  for node in 1 2 3
   do
-   openstack server create  --flavor standard.2  --key-name  $sshkey --user-data init.sh  --volume ncn-m00$node --network Cray_Network  --network PET_NET --file /etc/hosts=hosts ncn-m00$node
-   openstack server create  --flavor highcpu.4  --key-name  $sshkey --user-data init.sh  --volume ncn-w00$node --network Cray_Network --network PET_NET --file /etc/hosts=hosts ncn-w00$node
+   openstack server create --flavor standard.2 --key-name $sshkey --user-data init.sh --volume ncn-m00$node --network Cray_Network --file /etc/hosts=hosts ncn-m00$node
+   openstack server create --flavor highcpu.4 --key-name $sshkey --user-data init.sh --volume ncn-w00$node --network Cray_Network --file /etc/hosts=hosts ncn-w00$node
   done
 fi
 
@@ -107,6 +105,14 @@ cp /var/www/ephemeral/configs/data.orig /var/www/ephemeral/configs/data.json
 for node in $(openstack server list -f json| jq -r .[].Name|egrep -i 'ncn-')
 do
  ip="$(openstack server show -f json $node|jq -r .addresses|cut -d ';' -f1|cut -d = -f2)"
+ echo $ip
+ echo $node
+ while [ -z "$ip" ]; do
+    echo "Waiting for ip to get assigned"
+    sleep 2
+    ip="$(openstack server show -f json $node|jq -r .addresses|cut -d ';' -f1|cut -d = -f2)"
+ done
+
  until ping -c1 "$ip" 2>&1 >/dev/null; do echo "Waiting for $ip to have a mac address"; sleep 2; done
  mac="$(ip -r -br n show to $ip|awk '{print $5}')"
  echo "$ip $node $node.nmn" >> /etc/hosts
@@ -116,6 +122,3 @@ done
 echo "Restarting dnsmasq and basecamp"
 systemctl restart dnsmasq.service
 podman restart basecamp
-
-# Put in scp for resolv.conf
-# should we automate adding in the nameserver?  pit is supposed to stay around
