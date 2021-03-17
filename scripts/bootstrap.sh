@@ -18,8 +18,6 @@ done
 echo "Removing ncn ips from /etc/hosts"
 sed -i -e '/DELETE_BELOW/q0' /etc/hosts
 
-# Just here for sanity.  can remove shortly
-
 echo "k8s $k8s"
 echo "ceph $ceph"
 echo "all $all"
@@ -44,12 +42,6 @@ then
     openstack volume create --size 45 --type RBD --snapshot 1.4.k8s-gold  --bootable ncn-w00$num
   done
 fi
-
-
-#for node in $(openstack server list -f json| jq -r .[].Name); do  echo "$(openstack server show -f json $node|jq -r .addresses|cut -d = -f2) $node" >> hosts; done
-
-# Getting status of openstack volumes
-# Change to a while or until
 
 counter=1
 until [ $counter -eq 0 ]
@@ -77,7 +69,7 @@ then
  echo "Creating vms for ceph"
  for node in 1 2 3
   do
-   openstack server create --flavor highmem.2  --key-name  $sshkey --user-data init.sh  --volume ncn-s00$node --network Cray_Network --file /etc/hosts=hosts ncn-s00$node
+   openstack server create --flavor highmem.2  --key-name  $sshkey --user-data init.sh  --volume ncn-s00$node --network Cray_Network ncn-s00$node
   done
 fi
 
@@ -86,8 +78,8 @@ then
  echo "Creating vms for K8S"
  for node in 1 2 3
   do
-   openstack server create --flavor standard.2 --key-name $sshkey --user-data init.sh --volume ncn-m00$node --network Cray_Network --file /etc/hosts=hosts ncn-m00$node
-   openstack server create --flavor highcpu.4 --key-name $sshkey --user-data init.sh --volume ncn-w00$node --network Cray_Network --file /etc/hosts=hosts ncn-w00$node
+   openstack server create --flavor standard.2 --key-name $sshkey --user-data init.sh --volume ncn-m00$node --network Cray_Network ncn-m00$node
+   openstack server create --flavor highcpu.4 --key-name $sshkey --user-data init.sh --volume ncn-w00$node --network Cray_Network ncn-w00$node
   done
 fi
 
@@ -104,16 +96,15 @@ cp /var/www/ephemeral/configs/data.orig /var/www/ephemeral/configs/data.json
 for node in $(openstack server list -f json| jq -r .[].Name|egrep -i 'ncn-')
 do
  ip="$(openstack server show -f json $node|jq -r .addresses|cut -d ';' -f1|cut -d = -f2)"
- echo $ip
- echo $node
  while [ -z "$ip" ]; do
-    echo "Waiting for ip to get assigned"
+    echo "Waiting for ip to get assigned for $node"
     sleep 2
     ip="$(openstack server show -f json $node|jq -r .addresses|cut -d ';' -f1|cut -d = -f2)"
  done
 
- until ping -c1 "$ip" 2>&1 >/dev/null; do echo "Waiting for $ip to have a mac address"; sleep 2; done
+ until ping -c1 "$ip" 2>&1 >/dev/null; do echo "Waiting for node ${node}'s ip (${ip}) to have a mac address"; sleep 2; done
  mac="$(ip -r -br n show to $ip|awk '{print $5}')"
+ echo "Node $node has ip: $ip and mac: $mac"
  echo "$ip $node $node.nmn" >> /etc/hosts
  sed -i -e "s/mac-$node/$mac/" /var/www/ephemeral/configs/data.json
 done
