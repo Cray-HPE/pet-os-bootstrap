@@ -18,21 +18,33 @@ if [[ "$rebuild_node" =~ ^ncn-w ]]; then
 
 elif [[ "$rebuild_node" =~ ^ncn-m ]]; then
 
-  if [[ "$rebuild_node" == "$first_master"  ]]; then
-    echo "this is first master -- do special things" 
-  else
-    echo "Stopping etcd on $rebuild_node"
-    pdsh -w $rebuild_node "systemctl stop etcd.service"
-    echo "Removing $rebuild_node from etcd cluster"
-    pdsh -w  $first_master "etcdctl --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/ca.crt  --key=/etc/kubernetes/pki/etcd/ca.key --endpoints=localhost:2379 member remove \$(etcdctl --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/ca.crt  --key=/etc/kubernetes/pki/etcd/ca.key --endpoints=localhost:2379 member list | grep $rebuild_node | cut -d , -f1)"
-    echo "Removing $rebuild_node from cluster"
-    pdsh -w $first_master "kubectl delete node $rebuild_node"
-  fi
-fi
+  if [ "$rebuild_node" == "$first_master" ]; then
+    #
+    # We need to promote a different master that we can join from
+    #
+    if [ "$rebuild_node" == "ncn-m002" ]; then
+      echo "Promoting ncn-m001 to first master"
+      first_master=ncn-m001
+    else
+      echo "Promoting ncn-m002 to first master"
+      first_master=ncn-m002
+    fi
 
-#if [[ "$rebuild_node" =~ ^ncn-m ]]; then
-#  exit 0
-#fi
+    echo "Changing and restarting basecamp"
+    sed -i "s/.*first-master-hostname.*/      \"first-master-hostname\": \"$first_master\",/" /var/www/ephemeral/configs/data.json
+    sed -i "s/.*first-master-hostname.*/      \"first-master-hostname\": \"$first_master\",/" /var/www/ephemeral/configs/data.orig 
+    podman restart basecamp
+    scp ./promote-new-master.sh root@$first_master:/tmp
+    pdsh -w $first_master "chmod 755 /tmp/promote-new-master.sh && /tmp/promote-new-master.sh"
+
+  fi
+  echo "Stopping etcd on $rebuild_node"
+  pdsh -w $rebuild_node "systemctl stop etcd.service"
+  echo "Removing $rebuild_node from etcd cluster"
+  pdsh -w  $first_master "etcdctl --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/ca.crt  --key=/etc/kubernetes/pki/etcd/ca.key --endpoints=localhost:2379 member remove \$(etcdctl --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/ca.crt  --key=/etc/kubernetes/pki/etcd/ca.key --endpoints=localhost:2379 member list | grep $rebuild_node | cut -d , -f1)"
+  echo "Removing $rebuild_node from cluster"
+  pdsh -w $first_master "kubectl delete node $rebuild_node"
+fi
 
 echo "Deleting server $rebuild_node"
 openstack server delete $rebuild_node
