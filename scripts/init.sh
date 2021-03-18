@@ -42,7 +42,7 @@ sed -i 's/vlan002/eth0/g' /etc/ansible/hosts
 #######
 if [[ "$(hostname)" =~ ^ncn-m ]] || [[ "$(hostname)" =~ ^ncn-w ]]; then
   sed -i 's/configure-load-balancer-for-master/#configure-load-balancer-for-master/' /srv/cray/scripts/common/kubernetes-cloudinit.sh
-  sed -i 's/craysys metadata get k8s_virtual_ip/dig \+short \$\(hostname\).nmn/' /srv/cray/scripts/metal/lib.sh
+  sed -i 's/$(craysys metadata get k8s_virtual_ip)/kubernetes-api.nmn/' /srv/cray/scripts/metal/lib.sh
   sed -i 's/6442/6443/' /srv/cray/scripts/metal/lib.sh
   sed -i 's/2381/2379/' /srv/cray/scripts/metal/lib.sh
 fi

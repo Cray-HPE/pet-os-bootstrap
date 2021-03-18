@@ -105,7 +105,7 @@ do
  until ping -c1 "$ip" 2>&1 >/dev/null; do echo "Waiting for node ${node}'s ip (${ip}) to have a mac address"; sleep 2; done
  mac="$(ip -r -br n show to $ip|awk '{print $5}')"
  echo "Node $node has ip: $ip and mac: $mac"
- echo "$ip $node $node.nmn" >> /etc/hosts
+ echo "$ip $node $node.nmn kubernetes-api.nmn" >> /etc/hosts
  sed -i -e "s/mac-$node/$mac/" /var/www/ephemeral/configs/data.json
 done
 
