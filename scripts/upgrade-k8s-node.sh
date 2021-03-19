@@ -26,11 +26,15 @@ elif [[ "$rebuild_node" =~ ^ncn-m ]]; then
       echo "Promoting ncn-m001 to first master"
       scp ncn-m002:/etc/cray/kubernetes/certificate-key /tmp
       scp /tmp/certificate-key ncn-m001:/etc/cray/kubernetes
+      scp ncn-m002:/etc/cray/kubernetes/kubeadm.yaml /tmp
+      scp /tmp/kubeadm.yaml ncn-m001:/etc/cray/kubernetes
       first_master=ncn-m001
     else
       echo "Promoting ncn-m002 to first master"
       scp ncn-m001:/etc/cray/kubernetes/certificate-key /tmp
       scp /tmp/certificate-key ncn-m002:/etc/cray/kubernetes
+      scp ncn-m001:/etc/cray/kubernetes/kubeadm.yaml /tmp
+      scp /tmp/kubeadm.yaml ncn-m002:/etc/cray/kubernetes
       first_master=ncn-m002
     fi
 
@@ -62,7 +66,7 @@ echo "Removing ncn ips from /etc/hosts"
 sed -i -e '/DELETE_BELOW/q0' /etc/hosts
 
 echo "Creating boot volumes for node ${rebuild_node}"
-openstack volume create --size 45 --type RBD --snapshot 1.5-k8s-gold  --bootable $rebuild_node
+openstack volume create --size 45 --type RBD --snapshot 1.5.k8s-gold  --bootable $rebuild_node
 
 counter=1
 until [ $counter -eq 0 ]
