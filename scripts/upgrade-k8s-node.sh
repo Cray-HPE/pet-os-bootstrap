@@ -24,9 +24,13 @@ elif [[ "$rebuild_node" =~ ^ncn-m ]]; then
     #
     if [ "$rebuild_node" == "ncn-m002" ]; then
       echo "Promoting ncn-m001 to first master"
+      scp ncn-m002:/etc/cray/kubernetes/certificate-key /tmp
+      scp /tmp/certificate-key ncn-m001:/etc/cray/kubernetes
       first_master=ncn-m001
     else
       echo "Promoting ncn-m002 to first master"
+      scp ncn-m001:/etc/cray/kubernetes/certificate-key /tmp
+      scp /tmp/certificate-key ncn-m002:/etc/cray/kubernetes
       first_master=ncn-m002
     fi
 
@@ -34,6 +38,7 @@ elif [[ "$rebuild_node" =~ ^ncn-m ]]; then
     sed -i "s/.*first-master-hostname.*/      \"first-master-hostname\": \"$first_master\",/" /var/www/ephemeral/configs/data.json
     sed -i "s/.*first-master-hostname.*/      \"first-master-hostname\": \"$first_master\",/" /var/www/ephemeral/configs/data.orig 
     podman restart basecamp
+    systemctl restart dnsmasq.service
     scp ./promote-new-master.sh root@$first_master:/tmp
     pdsh -w $first_master "chmod 755 /tmp/promote-new-master.sh && /tmp/promote-new-master.sh"
 
@@ -57,7 +62,7 @@ echo "Removing ncn ips from /etc/hosts"
 sed -i -e '/DELETE_BELOW/q0' /etc/hosts
 
 echo "Creating boot volumes for node ${rebuild_node}"
-openstack volume create --size 45 --type RBD --snapshot k8s-1.19-gold  --bootable $rebuild_node
+openstack volume create --size 45 --type RBD --snapshot 1.5-k8s-gold  --bootable $rebuild_node
 
 counter=1
 until [ $counter -eq 0 ]
@@ -115,7 +120,5 @@ podman restart basecamp
 
 if [[ "$rebuild_node" =~ ^ncn-m ]]; then
   echo "Adding $rebuild_node back into etcd cluster with new ip ($new_ip)"
-  pdsh -w $first_master "etcdctl --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/ca.crt --key=/etc/kubernetes/pki/etcd/ca.key --endpoints=localhost:2379 member add ncn-m003 --peer-urls=https://$new_ip:2380"
-  echo "Changing initial cluster state for etcd on $rebuild_node to 'existing' before it tries to join"
-  pdsh -w $rebuild_node "sed -i 's/new/existing/' /srv/cray/resources/common/etcd/etcd.service"
+  pdsh -w $first_master "etcdctl --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/ca.crt --key=/etc/kubernetes/pki/etcd/ca.key --endpoints=localhost:2379 member add $rebuild_node --peer-urls=https://$new_ip:2380"
 fi
