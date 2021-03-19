@@ -69,7 +69,7 @@ then
  echo "Creating vms for ceph"
  for node in 1 2 3
   do
-   openstack server create --flavor highmem.2  --key-name  $sshkey --user-data init.sh  --volume ncn-s00$node --network Cray_Network ncn-s00$node
+   openstack server create --flavor highmem.2  --key-name $sshkey --user-data init.sh  --volume ncn-s00$node --network Cray_Network ncn-s00$node
   done
 fi
 
@@ -105,7 +105,11 @@ do
  until ping -c1 "$ip" 2>&1 >/dev/null; do echo "Waiting for node ${node}'s ip (${ip}) to have a mac address"; sleep 2; done
  mac="$(ip -r -br n show to $ip|awk '{print $5}')"
  echo "Node $node has ip: $ip and mac: $mac"
- echo "$ip $node $node.nmn kubernetes-api.nmn" >> /etc/hosts
+ if [[ "$node" =~ ^ncn-m ]]; then
+   echo "$ip $node $node.nmn kubernetes-api.nmn" >> /etc/hosts
+ else
+   echo "$ip $node $node.nmn" >> /etc/hosts
+ fi
  sed -i -e "s/mac-$node/$mac/" /var/www/ephemeral/configs/data.json
 done
 

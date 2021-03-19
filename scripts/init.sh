@@ -106,7 +106,7 @@ rm -rf /run/cloud-init/*.*
 
 echo "datasource:
   NoCloud:
-    seedfrom: http://10.248.4.244:8888/" >> /etc/cloud/cloud.cfg 
+    seedfrom: http://10.248.6.61:8888/" >> /etc/cloud/cloud.cfg 
 systemctl start cloud-init
 cloud-init clean
 cloud-init init
