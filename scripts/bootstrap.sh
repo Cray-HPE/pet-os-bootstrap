@@ -33,37 +33,36 @@ then
   done
 fi
 
-
 if [ "$k8s" = "true" ] || [ "$all" = "true" ]
 then
   echo "Creating boot volumes for K8S"
   for num in 1 2 3
   do
-    openstack volume create --size 45 --type RBD --snapshot 1.5.k8s-gold  --bootable ncn-m00$num
-    openstack volume create --size 45 --type RBD --snapshot 1.5.k8s-gold  --bootable ncn-w00$num
+    openstack volume create --size 45 --type RBD --snapshot 1.5-k8s-golden --bootable ncn-m00$num
+    openstack volume create --size 45 --type RBD --snapshot 1.5-k8s-golden --bootable ncn-w00$num
   done
 fi
 
-#counter=1
-#until [ $counter -eq 0 ]
-#do
-# counter=0
-# echo "Checking status of boot volumes"
-# clear
-# for vol in $(openstack volume list -f json| jq -r '.[]| select(.Name|contains ("ncn-"))|.ID')
-#  do
-#    status=$(openstack volume show $vol -f json|jq -r .status)
-#    if [ "$status" != "available" ]
-#    then
-#    counter=+1
-#    echo "Status of volume $vol is: $status"
-#    fi
-#  done
-#done
-#
-## use to get volume and server names
-#echo "sleeping 20 second...zzz.."
-#sleep 20
+counter=1
+until [ $counter -eq 0 ]
+do
+ counter=0
+ echo "Checking status of boot volumes"
+ clear
+ for vol in $(openstack volume list -f json| jq -r '.[]| select(.Name|contains ("ncn-"))|.ID')
+  do
+    status=$(openstack volume show $vol -f json|jq -r .status)
+    if [ "$status" != "available" ]
+    then
+    counter=+1
+    echo "Status of volume $vol is: $status"
+    fi
+  done
+done
+
+# use to get volume and server names
+echo "sleeping 20 second...zzz.."
+sleep 20
 
 if  [ "$ceph" = "true" ] || [ "$all" = "true" ]
 then
@@ -75,7 +74,7 @@ then
 
  for node in 1
  do
-   openstack server create --flavor highmem.2  --key-name $sshkey --user-data init-ceph.sh  --volume ncn-s00$node --network Cray_Network ncn-s00$node
+   openstack server create --flavor highmem.2  --key-name $sshkey --user-data init.sh  --volume ncn-s00$node --network Cray_Network ncn-s00$node
  done
 fi
 

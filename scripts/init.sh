@@ -34,8 +34,42 @@ logchange 1.0" >> /etc/chrony.d/cray.conf
 sed -i 's/^#NTP=.*/NTP=ncn-s001/g' /etc/systemd/timesyncd.conf
 sed -i -e '/rgwloadbalancers/,+4 s/^/#/' /etc/ansible/hosts
 sed -i 's/vlan002/eth0/g' /etc/ansible/hosts
- 
+sed -i 's/vlan002/eth0/g' /srv/cray/scripts/common/storage-ceph-cloudinit.sh
+sed -i 's/vlan002/eth0/g' /srv/cray/scripts/metal/lib-1.5.sh
 
+cat > /srv/cray/resources/metal/containerd/config.toml <<'EOF'
+# Set containerd's OOM score
+oom_score = -999
+
+[metrics]
+  address = "0.0.0.0:1338"
+
+[plugins."io.containerd.grpc.v1.cri"]
+  sandbox_image = "k8s.gcr.io/pause:3.2"
+  [plugins."io.containerd.grpc.v1.cri".containerd]
+    snapshotter = "overlayfs"
+
+    [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+      runtime_type = "io.containerd.runc.v2"
+
+  [plugins."io.containerd.grpc.v1.cri".cni]
+    max_conf_num = 1
+
+  [plugins."io.containerd.grpc.v1.cri".registry]
+    [plugins."io.containerd.grpc.v1.cri".registry.mirrors]
+      [plugins."io.containerd.grpc.v1.cri".registry.mirrors."dtr.dev.cray.com"]
+        endpoint = ["https://dtr.dev.cray.com"]
+      [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
+        endpoint = ["https://dtr.dev.cray.com"]
+      [plugins."io.containerd.grpc.v1.cri".registry.mirrors."registry-1.docker.io"]
+        endpoint = ["https://dtr.dev.cray.com"]
+      [plugins."io.containerd.grpc.v1.cri".registry.mirrors."quay.io"]
+        endpoint = ["https://dtr.dev.cray.com"]
+      [plugins."io.containerd.grpc.v1.cri".registry.mirrors."gcr.io"]
+        endpoint = ["https://dtr.dev.cray.com"]
+      [plugins."io.containerd.grpc.v1.cri".registry.mirrors."k8s.gcr.io"]
+        endpoint = ["https://dtr.dev.cray.com"]
+EOF
 
 #######
 #  Maybe we can remove some of this now that cloud init works-ish
@@ -91,6 +125,9 @@ logdir /var/log/chrony
 # Also include any directives found in configuration files in /etc/chrony.d
 include /etc/chrony.d/*.conf
 " >> /etc/chronyd.conf
+   sed -i 's/http:\/\/rgw-vip.hmn:8080/http:\/\/ncn-s001:8080/g' /etc/ansible/ceph-rgw-users/roles/ceph-rgw-users/defaults/main.yml
+   sed -i 's/https:\/\/rgw-vip.nmn/http:\/\/ncn-s001:8080/g' /etc/ansible/ceph-rgw-users/roles/ceph-rgw-users/defaults/main.yml
+   sed -i 's/http:\/\/rgw-vip.nmn/http:\/\/ncn-s001:8080/g' /etc/ansible/ceph-rgw-users/roles/ceph-rgw-users/defaults/main.yml
  fi
 
 timedatectl set-ntp true
