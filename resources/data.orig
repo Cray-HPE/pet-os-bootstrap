@@ -101,7 +101,8 @@
             "/srv/cray/scripts/metal/set-dhcp-to-static.sh",
             "/srv/cray/scripts/metal/set-dns-config.sh",
             "/srv/cray/scripts/metal/set-ntp-config.sh",
-            "/srv/cray/scripts/common/update_ca_certs.py"
+            "/srv/cray/scripts/common/update_ca_certs.py",
+            "/srv/cray/scripts/common/storage-ceph-cloudinit.sh dtr.dev.cray.com"
          ]
       }
    },
