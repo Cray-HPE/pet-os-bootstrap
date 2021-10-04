@@ -36,40 +36,47 @@ sed -i -e '/rgwloadbalancers/,+4 s/^/#/' /etc/ansible/hosts
 sed -i 's/vlan002/eth0/g' /etc/ansible/hosts
 sed -i 's/vlan002/eth0/g' /srv/cray/scripts/common/storage-ceph-cloudinit.sh
 sed -i 's/vlan002/eth0/g' /srv/cray/scripts/metal/lib-1.5.sh
+sed -i 's/vlan002/eth0/g' /etc/ansible/ceph-rgw-users/roles/ceph-cephfs/templates/storageclasses.yaml.j2
+sed -i 's/vlan002/eth0/g' /etc/ansible/ceph-rgw-users/roles/ceph-rbd/templates/ceph-rbd.storageclass.yaml.j2
+sed -i 's/vlan002/eth0/g' /etc/ansible/ceph-rgw-users/roles/ceph-rbd/tasks/main.yml
 
-cat > /srv/cray/resources/metal/containerd/config.toml <<'EOF'
-# Set containerd's OOM score
-oom_score = -999
+printf "Fix\n" | parted ---pretend-input-tty /dev/vda print
+printf "Yes\n100%%\n" | parted ---pretend-input-tty /dev/vda resizepart 2
+resize2fs /dev/vda2
 
-[metrics]
-  address = "0.0.0.0:1338"
-
-[plugins."io.containerd.grpc.v1.cri"]
-  sandbox_image = "k8s.gcr.io/pause:3.2"
-  [plugins."io.containerd.grpc.v1.cri".containerd]
-    snapshotter = "overlayfs"
-
-    [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
-      runtime_type = "io.containerd.runc.v2"
-
-  [plugins."io.containerd.grpc.v1.cri".cni]
-    max_conf_num = 1
-
-  [plugins."io.containerd.grpc.v1.cri".registry]
-    [plugins."io.containerd.grpc.v1.cri".registry.mirrors]
-      [plugins."io.containerd.grpc.v1.cri".registry.mirrors."dtr.dev.cray.com"]
-        endpoint = ["https://dtr.dev.cray.com"]
-      [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
-        endpoint = ["https://dtr.dev.cray.com"]
-      [plugins."io.containerd.grpc.v1.cri".registry.mirrors."registry-1.docker.io"]
-        endpoint = ["https://dtr.dev.cray.com"]
-      [plugins."io.containerd.grpc.v1.cri".registry.mirrors."quay.io"]
-        endpoint = ["https://dtr.dev.cray.com"]
-      [plugins."io.containerd.grpc.v1.cri".registry.mirrors."gcr.io"]
-        endpoint = ["https://dtr.dev.cray.com"]
-      [plugins."io.containerd.grpc.v1.cri".registry.mirrors."k8s.gcr.io"]
-        endpoint = ["https://dtr.dev.cray.com"]
-EOF
+#cat > /srv/cray/resources/metal/containerd/config.toml <<'EOF'
+## Set containerd's OOM score
+#oom_score = -999
+#
+#[metrics]
+#  address = "0.0.0.0:1338"
+#
+#[plugins."io.containerd.grpc.v1.cri"]
+#  sandbox_image = "k8s.gcr.io/pause:3.2"
+#  [plugins."io.containerd.grpc.v1.cri".containerd]
+#    snapshotter = "overlayfs"
+#
+#    [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+#      runtime_type = "io.containerd.runc.v2"
+#
+#  [plugins."io.containerd.grpc.v1.cri".cni]
+#    max_conf_num = 1
+#
+#  [plugins."io.containerd.grpc.v1.cri".registry]
+#    [plugins."io.containerd.grpc.v1.cri".registry.mirrors]
+#      [plugins."io.containerd.grpc.v1.cri".registry.mirrors."dtr.dev.cray.com"]
+#        endpoint = ["https://dtr.dev.cray.com"]
+#      [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
+#        endpoint = ["https://dtr.dev.cray.com"]
+#      [plugins."io.containerd.grpc.v1.cri".registry.mirrors."registry-1.docker.io"]
+#        endpoint = ["https://dtr.dev.cray.com"]
+#      [plugins."io.containerd.grpc.v1.cri".registry.mirrors."quay.io"]
+#        endpoint = ["https://dtr.dev.cray.com"]
+#      [plugins."io.containerd.grpc.v1.cri".registry.mirrors."gcr.io"]
+#        endpoint = ["https://dtr.dev.cray.com"]
+#      [plugins."io.containerd.grpc.v1.cri".registry.mirrors."k8s.gcr.io"]
+#        endpoint = ["https://dtr.dev.cray.com"]
+#EOF
 
 #######
 #  Maybe we can remove some of this now that cloud init works-ish
@@ -137,13 +144,20 @@ systemctl restart chronyd.service
 
 cephadm --image dtr.dev.cray.com/ceph/ceph:v15.2.8 pull
 
+#
+# Sleeping to give other nodes time to get an IP and basecamp updated on PIT node
+#
+sleep 60
 systemctl stop cloud-init.target
 rm -rf /var/lib/cloud/*.*
 rm -rf /run/cloud-init/*.*
 
+sed -i "/^search.*/a nameserver PIT_IP" /etc/resolv.conf
+
+echo "" >> /etc/cloud/cloud.cfg
 echo "datasource:
   NoCloud:
-    seedfrom: http://10.248.6.61:8888/" >> /etc/cloud/cloud.cfg 
+    seedfrom: http://PIT_IP:8888/" >> /etc/cloud/cloud.cfg 
 systemctl start cloud-init
 cloud-init clean
 cloud-init init
