@@ -26,7 +26,7 @@
          "kubernetes-weave-mtu":"1376",
          "ncn-mgmt-node-auditing-enabled":false,
          "ntp_local_nets":"10.248.0.0/18",
-         "ntp_peers":"ncn-m003 ncn-w001 ncn-s001 ncn-s002 ncn-m001 ncn-m002 ncn-w002 ncn-s003 ncn-w003",
+         "ntp_peers":"ncn-m003 ncn-w001 ncn-s001 ncn-s002 ncn-m001 ncn-m002 ncn-w002 ncn-s003 ncn-w003 ncn-w004 ncn-w005 ncn-w006",
          "num_storage_nodes":"3",
          "rgw-virtual-ip":"NOT-USED",
          "site-domain":"dev.cray.com",
@@ -80,6 +80,81 @@
          ]
       }
    },
+   "mac-ncn-w004":{
+      "meta-data":{
+         "availability-zone":"x3000",
+         "instance-id":"i-E0C27628",
+         "local-hostname":"ncn-w004",
+         "region":"redbull",
+         "shasta-role":"ncn-worker",
+         "xname":"x3000c0s22b0n0"
+      },
+      "user-data":{
+         "hostname":"ncn-w004",
+         "local_hostname":"ncn-w004",
+         "mac0":{
+            "gateway":"10.252.0.1",
+            "ip":"",
+            "mask":"10.252.2.0/23"
+         },
+         "runcmd":[
+            "/srv/cray/scripts/metal/set-dns-config.sh",
+            "/srv/cray/scripts/metal/set-ntp-config.sh",
+            "/srv/cray/scripts/common/update_ca_certs.py",
+            "/srv/cray/scripts/common/kubernetes-cloudinit.sh"
+         ]
+      }
+   },
+   "mac-ncn-w005":{
+      "meta-data":{
+         "availability-zone":"x3000",
+         "instance-id":"i-E0C27628",
+         "local-hostname":"ncn-w005",
+         "region":"redbull",
+         "shasta-role":"ncn-worker",
+         "xname":"x3000c0s22b0n0"
+      },
+      "user-data":{
+         "hostname":"ncn-w005",
+         "local_hostname":"ncn-w005",
+         "mac0":{
+            "gateway":"10.252.0.1",
+            "ip":"",
+            "mask":"10.252.2.0/23"
+         },
+         "runcmd":[
+            "/srv/cray/scripts/metal/set-dns-config.sh",
+            "/srv/cray/scripts/metal/set-ntp-config.sh",
+            "/srv/cray/scripts/common/update_ca_certs.py",
+            "/srv/cray/scripts/common/kubernetes-cloudinit.sh"
+         ]
+      }
+   },
+   "mac-ncn-w006":{
+      "meta-data":{
+         "availability-zone":"x3000",
+         "instance-id":"i-E0C27628",
+         "local-hostname":"ncn-w006",
+         "region":"redbull",
+         "shasta-role":"ncn-worker",
+         "xname":"x3000c0s22b0n0"
+      },
+      "user-data":{
+         "hostname":"ncn-w006",
+         "local_hostname":"ncn-w006",
+         "mac0":{
+            "gateway":"10.252.0.1",
+            "ip":"",
+            "mask":"10.252.2.0/23"
+         },
+         "runcmd":[
+            "/srv/cray/scripts/metal/set-dns-config.sh",
+            "/srv/cray/scripts/metal/set-ntp-config.sh",
+            "/srv/cray/scripts/common/update_ca_certs.py",
+            "/srv/cray/scripts/common/kubernetes-cloudinit.sh"
+         ]
+      }
+   },
    "mac-ncn-s001":{
       "meta-data":{
          "availability-zone":"x3000",
@@ -102,7 +177,7 @@
             "/srv/cray/scripts/metal/set-dns-config.sh",
             "/srv/cray/scripts/metal/set-ntp-config.sh",
             "/srv/cray/scripts/common/update_ca_certs.py",
-            "/srv/cray/scripts/common/storage-ceph-cloudinit.sh dtr.dev.cray.com"
+            "/srv/cray/scripts/common/storage-ceph-cloudinit.sh arti.dev.cray.com/third-party-docker-stable-local"
          ]
       }
    },
