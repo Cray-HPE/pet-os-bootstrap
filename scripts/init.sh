@@ -5,6 +5,9 @@ rm /root/zero-file
 #ip route add default via 10.248.0.1
 #ip route add 172.16.0.0/12 via $route dev eth0
 
+
+sed -i "/^search.*/a nameserver PIT_IP" /etc/resolv.conf
+
 if [ ! -f /usr/bin/check-default-route.sh ]; then
   echo "Setting up default route cronjob"
 
@@ -144,20 +147,18 @@ systemctl restart chronyd.service
 
 cephadm --image dtr.dev.cray.com/ceph/ceph:v15.2.8 pull
 
-#
-# Sleeping to give other nodes time to get an IP and basecamp updated on PIT node
-#
-sleep 60
 systemctl stop cloud-init.target
 rm -rf /var/lib/cloud/*.*
 rm -rf /run/cloud-init/*.*
+killproc cloud-init
 
-sed -i "/^search.*/a nameserver PIT_IP" /etc/resolv.conf
-
+if ! grep -q NoCloud /etc/cloud/cloud.cfg; then
 echo "" >> /etc/cloud/cloud.cfg
 echo "datasource:
   NoCloud:
     seedfrom: http://PIT_IP:8888/" >> /etc/cloud/cloud.cfg 
+fi
+
 systemctl start cloud-init
 cloud-init clean
 cloud-init init
