@@ -4,7 +4,7 @@
 # I think we need to build something in that makes either k8s or ceph optional.
 # they could technically build mercury using this as well.
 # below code to test
-while getopts k:c:a:i:K:S: stack
+while getopts k:c:a:i:K:S:C:W:O: stack
 do
   case "${stack}" in
           k) k8s=$OPTARG;;
@@ -13,6 +13,9 @@ do
           a) all=$OPTARG;;
           K) k8s_snapshot=$OPTARG;;
           S) storage_snapshot=$OPTARG;;
+	  C) num_storage_nodes=$OPTARG;;
+	  W) num_worker_nodes=$OPTARG;;
+	  O) num_osds=$OPTARG;;
   esac
 done
 
@@ -29,14 +32,20 @@ echo "all $all"
 echo "sshkey $sshkey"
 echo "k8s snapshot: $k8s_snapshot"
 echo "storage snapshot: $storage_snapshot"
+echo "Number of Storage Nodes: $num_storage_nodes"
+echo "Number of Worker Nodes: $num_worker_nodes"
+echo "Number of OSDs per Storage node: $num_osds"
 
 if  [ "$ceph" = "true" ] || [ "$all" = "true" ]
 then
   echo "Creating boot and OSD volumes for CEPH"
-  for num in 1 2 3
+  for num in $( seq 1 $num_storage_nodes)
   do
-   openstack volume create --size 25 --type RBD osd.$num
-   openstack volume create --size 45 --type RBD --bootable --snapshot $storage_snapshot ncn-s00$num
+    for osd in $( seq 1 $num_osds)
+    do
+      openstack volume create --size 25 --type RBD osd.$num"_"$osd
+    done
+    openstack volume create --size 45 --type RBD --bootable --snapshot $storage_snapshot ncn-s00$num
   done
 fi
 
@@ -52,7 +61,7 @@ fi
 if [ "$k8s" = "true" ] || [ "$all" = "true" ]
 then
   echo "Creating boot volumes for K8S workers"
-  for num in 1 2 3
+  for num in $( seq 1 $num_worker_nodes )
   do
     openstack volume create --size 150 --type RBD --snapshot $k8s_snapshot --bootable ncn-w00$num
   done
@@ -82,7 +91,7 @@ sleep 20
 if  [ "$ceph" = "true" ] || [ "$all" = "true" ]
 then
  echo "Creating vms for ceph"
- for node in 2 3
+ for node in $( seq 2 $num_storage_nodes )
  do
    openstack server create --flavor highmem.2  --key-name $sshkey --user-data init.sh  --volume ncn-s00$node --network Cray_Network ncn-s00$node
  done
@@ -117,9 +126,12 @@ fi
 #openstack server list -f json |jq '.[]| {Name, Status}'
 echo "Sleeping for 10 seconds ...ZZZ..."
 sleep 10
-for vol in 1 2 3
- do
-  openstack server add volume ncn-s00$vol osd.$vol
+for node in $( seq 1 $num_storage_nodes )
+do
+  for vol in $( seq 1 $num_osds )
+  do
+   openstack server add volume ncn-s00$node osd.$node"_"$vol
+  done
 done
 
 cp /var/www/ephemeral/configs/data.orig /var/www/ephemeral/configs/data.json
