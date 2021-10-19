@@ -153,11 +153,12 @@ rm -rf /var/lib/cloud/*.*
 rm -rf /run/cloud-init/*.*
 
 sed -i "/^search.*/a nameserver PIT_IP" /etc/resolv.conf
-
+if ! grep -q NoCloud /etc/cloud/cloud.cfg; then
 echo "" >> /etc/cloud/cloud.cfg
 echo "datasource:
   NoCloud:
     seedfrom: http://PIT_IP:8888/" >> /etc/cloud/cloud.cfg 
+fi
 systemctl start cloud-init
 cloud-init clean
 cloud-init init

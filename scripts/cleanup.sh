@@ -1,38 +1,24 @@
 #!/bin/bash
 
-for num in 1 2 3
+for node in $(openstack server list -f json|jq -r '.[]|select((.Status="ACTIVE") and (.Name|startswith("ncn")))|.Name')
 do
-  echo "Deleting server ncn-m00$num"
-  openstack server delete ncn-m00$num
-
-  echo "Deleting server ncn-w00$num"
-  openstack server delete ncn-w00$num
-
-  echo "Deleting server ncn-s00$num"
-  openstack server delete ncn-s00$num
-
-  sleep 30
-
-  echo "Deleting volume ncn-m00$num"
-  openstack volume delete ncn-m00$num
-
-  echo "Deleting volume ncn-w00$num"
-  openstack volume delete ncn-w00$num
-
-  echo "Deleting volume ncn-s00$num"
-  openstack volume delete ncn-s00$num
-
-  echo "Deleting volume osd.$num"
-  openstack volume delete osd.$num
+  echo "Deleting $node"
+  openstack server delete $node
 done
 
-#for num in 4 5 6
-#do
-#  echo "Deleting server ncn-w00$num"
-#  openstack server delete ncn-w00$num
-#
-#  sleep 30
-#
-#  echo "Deleting volume ncn-w00$num"
-#  openstack volume delete ncn-w00$num
-#done
+until [ $(openstack server list -f json|jq -r '.[]|select((.Status="ACTIVE") and (.Name|startswith("ncn")))|.Name'|wc -l) -eq 0 ]
+do
+  echo "Sleeping 10 seconds waiting for instances to be deleted"
+done
+
+for boot_vol in $(openstack volume list -f json|jq -r '.[]|select(.Name | startswith("ncn"))|.ID')
+do
+  echo "Deleting boot volume $boot_vol"
+  openstack volume delete $boot_vol
+done
+
+for osd in $(openstack volume list -f json|jq -r '.[]|select(.Name | startswith("osd"))|.ID')
+do
+  echo "Deleteing osd $osd"
+  openstack volume delete $osd
+done
