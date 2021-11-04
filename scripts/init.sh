@@ -142,7 +142,9 @@ systemctl daemon-reload
 systemctl restart systemd-timedated.service
 systemctl restart chronyd.service
 
-cephadm --image dtr.dev.cray.com/ceph/ceph:v15.2.8 pull
+# CD - Commenting out as dtr is not the correct location and this prob isn't needed anymore
+#
+#cephadm --image dtr.dev.cray.com/ceph/ceph:v15.2.8 pull
 
 #
 # Sleeping to give other nodes time to get an IP and basecamp updated on PIT node
