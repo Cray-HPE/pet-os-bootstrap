@@ -137,11 +137,11 @@ done
 cp /var/www/ephemeral/configs/data.orig /var/www/ephemeral/configs/data.json
 for node in $(openstack server list -f json| jq -r .[].Name|egrep -i 'ncn-m00')
 do
- ip="$(openstack server show -f json $node|jq -r .addresses|cut -d ';' -f1|cut -d = -f2)"
+ ip="$(openstack server show $node | grep addresses | awk '{print $(NF-1)}' | cut -d = -f2)"
  while [ -z "$ip" ]; do
     echo "Waiting for ip to get assigned for $node"
     sleep 2
-    ip="$(openstack server show -f json $node|jq -r .addresses|cut -d ';' -f1|cut -d = -f2)"
+    ip="$(openstack server show $node | grep addresses | awk '{print $(NF-1)}' | cut -d = -f2)"
  done
 
  until ping -c1 "$ip" 2>&1 >/dev/null; do echo "Waiting for node ${node}'s ip (${ip}) to have a mac address"; sleep 2; done
@@ -158,11 +158,11 @@ podman restart basecamp
 
 for node in $(openstack server list -f json| jq -r .[].Name|egrep -i 'ncn-[ws]')
 do
- ip="$(openstack server show -f json $node|jq -r .addresses|cut -d ';' -f1|cut -d = -f2)"
+ ip="$(openstack server show $node | grep addresses | awk '{print $(NF-1)}' | cut -d = -f2)"
  while [ -z "$ip" ]; do
     echo "Waiting for ip to get assigned for $node"
     sleep 2
-    ip="$(openstack server show -f json $node|jq -r .addresses|cut -d ';' -f1|cut -d = -f2)"
+    ip="$(openstack server show $node | grep addresses | awk '{print $(NF-1)}' | cut -d = -f2)"
  done
 
  until ping -c1 "$ip" 2>&1 >/dev/null; do echo "Waiting for node ${node}'s ip (${ip}) to have a mac address"; sleep 2; done
