@@ -177,7 +177,7 @@
             "/srv/cray/scripts/metal/set-dns-config.sh",
             "/srv/cray/scripts/metal/set-ntp-config.sh",
             "/srv/cray/scripts/common/update_ca_certs.py",
-            "/srv/cray/scripts/common/storage-ceph-cloudinit.sh arti.dev.cray.com/third-party-docker-stable-local"
+            "/srv/cray/scripts/common/storage-ceph-cloudinit.sh"
          ]
       }
    },
