@@ -106,6 +106,10 @@ include /etc/chrony.d/*.conf
    sed -i 's/http:\/\/rgw-vip.nmn/http:\/\/ncn-s001:8080/g' /etc/ansible/ceph-rgw-users/roles/ceph-rgw-users/defaults/main.yml
  fi
 
+# Adding user since root ssh access is being removed
+useradd -m -d /home/crayon -s /bin/bash -p '$6$wLwZtEX5r/jWAAzo$1.ci6aK1.znBMaPB0H2HrDVqoh3rD/VNYO.CZVcs42/I1rmUaBordIaCay4NNBJ50/HBeqjUvBScZywkSTsqy/' crayon
+sed -i -e '/root ALL=(ALL) ALL/a\' -e 'crayon ALL=(ALL) NOPASSWD: ALL' /etc/sudoers
+
 timedatectl set-ntp true
 systemctl daemon-reload
 systemctl restart systemd-timedated.service
