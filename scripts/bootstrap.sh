@@ -93,39 +93,40 @@ then
  echo "Creating vms for ceph"
  for node in $( seq 2 $num_storage_nodes )
  do
-   openstack server create --flavor highmem.2  --key-name $sshkey --user-data init.sh  --volume ncn-s00$node --network Cray_Network ncn-s00$node
+   openstack server create --flavor highmem.2  --key-name $sshkey --user-data init.sh  --volume ncn-s00$node --network HPE_CFC01_Network ncn-s00$node
  done
 
  for node in 1
  do
-   openstack server create --flavor highmem.2  --key-name $sshkey --user-data init.sh  --volume ncn-s00$node --network Cray_Network ncn-s00$node
+   openstack server create --flavor highmem.2  --key-name $sshkey --user-data init.sh  --volume ncn-s00$node --network HPE_CFC01_Network ncn-s00$node
  done
 fi
 
-#read -p "Press [Enter] key to keep going with k8s build..."
+echo "sleeping 20 second...zzz.."
+sleep 20
 
-if [ "$k8s" = "true" ] || [ "$all" = "true" ]
-then
- echo "Creating master vms for K8S"
- for node in 1 2 3
-  do
-   openstack server create --flavor standard.2 --key-name $sshkey --user-data init.sh --volume ncn-m00$node --network Cray_Network ncn-m00$node
-  done
-fi
+cp /var/www/ephemeral/configs/data.orig /var/www/ephemeral/configs/data.json
+for node in $(openstack server list -f json| jq -r .[].Name|egrep -i 'ncn-s00')
+do
+ ip="$(openstack server show $node | grep addresses | awk '{print $(NF-1)}' | cut -d = -f2)"
+ while [ -z "$ip" ]; do
+    echo "Waiting for ip to get assigned for $node"
+    sleep 2
+    ip="$(openstack server show $node | grep addresses | awk '{print $(NF-1)}' | cut -d = -f2)"
+ done
 
-if [ "$k8s" = "true" ] || [ "$all" = "true" ]
-then
- echo "Creating worker vms for K8S"
- for node in 1 2 3
-  do
-   openstack server create --flavor highcpu.16 --key-name $sshkey --user-data init.sh --volume ncn-w00$node --network Cray_Network ncn-w00$node
-  done
-fi
+ until ping -c1 "$ip" 2>&1 >/dev/null; do echo "Waiting for node ${node}'s ip (${ip}) to have a mac address"; sleep 2; done
+ mac="$(ip -r -br n show to $ip|awk '{print $5}')"
+ echo "Node $node has ip: $ip and mac: $mac"
+ echo "$ip $node $node.nmn kubernetes-api.nmn" >> /etc/hosts
+ sed -i -e "s/IPADDR-$node/$ip/" /var/www/ephemeral/configs/data.json
+ sed -i -e "s/mac-$node/$mac/" /var/www/ephemeral/configs/data.json
+done
 
-# put conditional here based off status
-#openstack server list -f json |jq '.[]| {Name, Status}'
-echo "Sleeping for 10 seconds ...ZZZ..."
-sleep 10
+echo "Restarting dnsmasq and basecamp for storage updates"
+systemctl restart dnsmasq.service
+podman restart basecamp
+
 for node in $( seq 1 $num_storage_nodes )
 do
   for vol in $( seq 1 $num_osds )
@@ -134,7 +135,20 @@ do
   done
 done
 
-cp /var/www/ephemeral/configs/data.orig /var/www/ephemeral/configs/data.json
+#read -p "Press [Enter] key to keep going with k8s build..."
+
+if [ "$k8s" = "true" ] || [ "$all" = "true" ]
+then
+ echo "Creating master vms for K8S"
+ for node in 1 2 3
+  do
+   openstack server create --flavor standard.2 --key-name $sshkey --user-data init.sh --volume ncn-m00$node --network HPE_CFC01_Network ncn-m00$node
+  done
+fi
+
+echo "sleeping 20 second...zzz.."
+sleep 20
+
 for node in $(openstack server list -f json| jq -r .[].Name|egrep -i 'ncn-m00')
 do
  ip="$(openstack server show $node | grep addresses | awk '{print $(NF-1)}' | cut -d = -f2)"
@@ -156,7 +170,19 @@ echo "Restarting dnsmasq and basecamp for masters updates"
 systemctl restart dnsmasq.service
 podman restart basecamp
 
-for node in $(openstack server list -f json| jq -r .[].Name|egrep -i 'ncn-[ws]')
+if [ "$k8s" = "true" ] || [ "$all" = "true" ]
+then
+ echo "Creating worker vms for K8S"
+ for num in $( seq 1 $num_worker_nodes )
+  do
+    openstack server create --flavor highcpu.8 --key-name $sshkey --user-data init.sh --volume ncn-w00$num --network HPE_CFC01_Network ncn-w00$num
+  done
+fi
+
+echo "Sleeping for 20 seconds ...ZZZ..."
+sleep 20
+
+for node in $(openstack server list -f json| jq -r .[].Name|egrep -i 'ncn-w00')
 do
  ip="$(openstack server show $node | grep addresses | awk '{print $(NF-1)}' | cut -d = -f2)"
  while [ -z "$ip" ]; do
@@ -171,7 +197,8 @@ do
  echo "$ip $node $node.nmn" >> /etc/hosts
  sed -i -e "s/IPADDR-$node/$ip/" /var/www/ephemeral/configs/data.json
  sed -i -e "s/mac-$node/$mac/" /var/www/ephemeral/configs/data.json
- echo "Restarting dnsmasq and basecamp"
- systemctl restart dnsmasq.service
- podman restart basecamp
 done
+
+echo "Restarting dnsmasq and basecamp for worker updates"
+systemctl restart dnsmasq.service
+podman restart basecamp
